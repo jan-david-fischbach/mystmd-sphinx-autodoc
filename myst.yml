@@ -8,6 +8,8 @@ project:
   authors: []
   github: https://github.com/agoose77/mystmd-sphinx-autodoc
   # bibliography: []
+  plugins: 
+    - autodoc.mjs
 site:
   template: book-theme
   # title:
