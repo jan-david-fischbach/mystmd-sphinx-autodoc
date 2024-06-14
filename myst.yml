@@ -1,0 +1,21 @@
+# See docs at: https://mystmd.org/guide/frontmatter
+version: 1
+project:
+  id: 7b059b50-4300-4144-81ef-8e990bb50f58
+  # title:
+  # description:
+  keywords: []
+  authors: []
+  github: https://github.com/agoose77/mystmd-sphinx-autodoc
+  # bibliography: []
+site:
+  template: book-theme
+  # title:
+  # options:
+  #   favicon: favicon.ico
+  #   logo: site_logo.png
+  nav: []
+  actions:
+    - title: Learn More
+      url: https://mystmd.org/guide
+  domains: []
