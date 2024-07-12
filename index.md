@@ -1,11 +1,7 @@
-:::{automodule} randomy
+:::{automodule} randomz
 :members:
 
 :::
 
 And some content
 
-:::{automodule} randomz
-:members:
-
-:::

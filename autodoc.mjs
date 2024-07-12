@@ -80,7 +80,7 @@ function autodocTransformImpl(opts, utils) {
       subprocess.on("close", resolve);
     });
 
-    console.debug(`Running Sphinx in ${dst}`);
+    console.info(`🐈 Running Sphinx in ${dst}.`);
 
     // Parse the resulting XML
     const tree = fromXml(await fs.readFile(join(dst, "xml", "index.xml")));
@@ -119,6 +119,12 @@ const parentNames = [
   "literal_emphasis",
   "literal_strong",
 
+  "field",
+  "field_name",
+  "field_body",
+  "field_list",
+
+  "desc",
   "desc_addname",
   "desc_annotation",
   "desc_classes_injector",
@@ -150,6 +156,7 @@ function translateDescNode(node) {
     return node;
   }
   if (node.name?.includes("field")) {
+    console.log(node.name);
     return {
       type: node.name,
       children: node.children.map(translateDescNode),
@@ -160,11 +167,7 @@ function translateDescNode(node) {
       children: node.children.map(translateDescNode),
     };
   } else {
-    console.log("UNKNOWN", node.name);
-    return {
-      type: "div",
-      children: node.children?.map(translateDescNode) ?? [],
-    };
+    throw new Error(`unknown node name ${node.name}`);
   }
 }
 
