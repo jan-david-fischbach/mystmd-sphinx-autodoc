@@ -90,6 +90,8 @@ function autodocTransformImpl(opts, utils) {
   };
 }
 
+const parentNames = ["inline","paragraph", "bullet_list", "list_item", "literal_emphasis", "literal_strong"];
+
 function interleave(items, spacer) {
   return items
     .map((item) => [item, spacer])
@@ -100,57 +102,21 @@ function translateDescNode(node) {
   if (node.type !== "element") {
     return node;
   }
-  switch (node.name) {
-    case "desc":
-	  case "desc_signature":
-      return {
-        type: "div",
-        children: node.children.map(translateDescNode)
-      };
-    case "desc_parameterlist":
-      return {
-        type: "span",
-        children: [
-          { type: "text", value: "(" },
-          ...interleave(node.children.map(translateDescNode), {
-            type: "text",
-            value: ", ",
-          }),
-          { type: "text", value: ")" },
-        ],
-      };
-    case "desc_parameter":
-      return { type: "span", children: node.children.map(translateDescNode) };
-    case "desc_addname":
-    case "desc_sig_space":
-    case "desc_sig_punctuation":
-    case "desc_sig_operator":
-      return node.children.map(translateDescNode)[0];
-    case "desc_name":
-      return {
-        type: "strong",
-        children: node.children.map(translateDescNode),
-      };
-    case "desc_sig_name":
-      return {
-        type: "emphasis",
-        children: node.children.map(translateDescNode),
-      };
-    case "field_list":
-      return {
-        type: "field_list",
-        children: node.children.map(translateDescNode),
-      };
-    case "field_name":
-      return {
-        type: "span",
-        children: [
-          { type: "emphasis", children: node.children.map(translateDescNode) },
-        ],
-      };
-
-    default:
-      return { type: "span", children: node.children.map(translateDescNode) };
+  if (node.name?.includes("desc") || node.name?.includes("field")) {
+    return {
+      type: node.name,
+      children: node.children.map(translateDescNode),
+    };
+  } else if (parentNames.includes(node.name)) {
+    return {
+      type: node.name,
+      children: node.children.map(translateDescNode),
+    };
+  } else {
+    return {
+      type: "div",
+      children: node.children?.map(translateDescNode) ?? [],
+    };
   }
 }
 
