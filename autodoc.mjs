@@ -3,6 +3,16 @@ import fs from "node:fs/promises";
 import { fromXml } from "xast-util-from-xml";
 import { selectAll } from "unist-util-select";
 
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+
+const SPHINX_CONF_PY = `
+import sys, os
+
+sys.path.insert(0, os.getcwd())
+extensions = ["sphinx.ext.autodoc", "sphinx.ext.napoleon"]
+`;
+
 function buildAutosummaryRST(node) {
   const bodyArgs = [];
   for (const arg of [
@@ -47,22 +57,33 @@ function autodocTransformImpl(opts, utils) {
       return;
     }
 
+    // Copy to temp
+    const dst = await fs.mkdtemp(join(tmpdir(), "autodoc-"));
+    // Write config
+    await fs.writeFile(join(dst, "conf.py"), SPHINX_CONF_PY, {
+      encoding: "utf-8",
+    });
+
     // Spit out index.rst
-    await fs.writeFile("sphinx/index.rst", generatedDirectives.join("\n"));
+    await fs.writeFile(join(dst, "index.rst"), generatedDirectives.join("\n"), {
+      encoding: "utf-8",
+    });
 
     // Run Sphinx build
     const subprocess = spawn("sphinx-build", [
       "-b",
       "xml",
-      "sphinx",
-      "sphinx/xml",
+      dst,
+      join(dst, "xml"),
     ]);
     await new Promise((resolve) => {
       subprocess.on("close", resolve);
     });
 
+    console.debug(`Running Sphinx in ${dst}`);
+
     // Parse the resulting XML
-    const tree = fromXml(await fs.readFile("sphinx/xml/index.xml"));
+    const tree = fromXml(await fs.readFile(join(dst, "xml", "index.xml")));
 
     // The actual data follows the target. We want something like target + text + desc as a selector, but I don't know how robust that is.
     const descNodes = selectAll("element[name=desc]", tree);
@@ -90,19 +111,45 @@ function autodocTransformImpl(opts, utils) {
   };
 }
 
-const parentNames = ["inline","paragraph", "bullet_list", "list_item", "literal_emphasis", "literal_strong"];
+const parentNames = [
+  "inline",
+  "paragraph",
+  "bullet_list",
+  "list_item",
+  "literal_emphasis",
+  "literal_strong",
 
-function interleave(items, spacer) {
-  return items
-    .map((item) => [item, spacer])
-    .reduce((result, array) => result.concat(array))
-    .slice(0, -1);
-}
+  "desc_addname",
+  "desc_annotation",
+  "desc_classes_injector",
+  "desc_content",
+  "desc_inline",
+  "desc_name",
+  "desc_optional",
+  "desc_parameter",
+  "desc_parameterlist",
+  "desc_returns",
+  "desc_sig_element",
+  "desc_sig_keyword",
+  "desc_sig_keyword_type",
+  "desc_sig_literal_char",
+  "desc_sig_literal_number",
+  "desc_sig_literal_string",
+  "desc_sig_name",
+  "desc_signature",
+  "desc_signature_line",
+  "desc_sig_operator",
+  "desc_sig_punctuation",
+  "desc_sig_space",
+  "desc_type",
+  "desc_type_parameter",
+];
+
 function translateDescNode(node) {
   if (node.type !== "element") {
     return node;
   }
-  if (node.name?.includes("desc") || node.name?.includes("field")) {
+  if (node.name?.includes("field")) {
     return {
       type: node.name,
       children: node.children.map(translateDescNode),
@@ -113,6 +160,7 @@ function translateDescNode(node) {
       children: node.children.map(translateDescNode),
     };
   } else {
+    console.log("UNKNOWN", node.name);
     return {
       type: "div",
       children: node.children?.map(translateDescNode) ?? [],
@@ -121,7 +169,6 @@ function translateDescNode(node) {
 }
 
 function processModule(node, descNodes) {
-  console.log(node.module, JSON.stringify(descNodes, null, 2));
   node.children = descNodes.map(translateDescNode);
 }
 
