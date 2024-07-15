@@ -1,7 +1,7 @@
-:::{automodule} randomz
-:members:
+# Demo documentation
+
+I'd like to embed some demo docs here.
+
+:::{embed} xref:apidoc/index
 
 :::
-
-And some content
-

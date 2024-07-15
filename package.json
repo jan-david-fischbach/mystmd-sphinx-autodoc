@@ -1,8 +1,0 @@
-{
-  "dependencies": {
-    "mystmd": "^1.2.8",
-    "unist-util-select": "^4.0.3",
-    "unist-util-visit": "^4.0.3",
-    "xast-util-from-xml": "^4.0.0"
-  }
-}
