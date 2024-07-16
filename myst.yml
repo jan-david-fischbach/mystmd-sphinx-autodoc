@@ -9,7 +9,7 @@ project:
   github: https://github.com/agoose77/mystmd-sphinx-autodoc
   # bibliography: []
   references:
-    apidoc: http://localhost:3000
+    apidoc: http://localhost:9090
 site:
   template: book-theme
   # title:

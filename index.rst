@@ -1,9 +1,9 @@
-Hello
------
+Python Documentation
+====================
 
 .. _my-note:
-.. note::
-   This is a note
+.. warning::
+   This is a WIP demo!
 
 
-See :ref:`install <my-note>`.
+See :ref:`this note <my-note>` for a disclaimer.

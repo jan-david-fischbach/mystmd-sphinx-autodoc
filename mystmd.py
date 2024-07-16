@@ -193,8 +193,8 @@ class MySTNodeVisitor(NodeVisitor):
     def visit_Text(self, node):
         return {"type": "text", "value": str(node)}
 
-    def visit_note(self, note):
-        return {"type": "admonition", "kind": "note", "children": []}
+
+    # visit_XXX admonitions (see loop below)
 
     def visit_section(self, node):
         return {"type": "block", "children": []}
@@ -204,6 +204,12 @@ class MySTNodeVisitor(NodeVisitor):
         yield result
 
         self._result = result
+
+
+for name in ("attention", "caution", "danger", "error", "hint", "important", "note", "tip", "warning"):
+    def visitor(self, node):
+        return {"type": "admonition", "kind": name, "children": []}
+    setattr(MySTNodeVisitor, f"visit_{name}", visitor)
 
 
 def setup(app):
