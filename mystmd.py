@@ -13,7 +13,7 @@ class MySTBuilder(Builder):
     name = "myst"
 
     def slugify(self, path):
-        return urllib.parse.quote_plus(path)
+        return path.replace("/", "-")
 
     def _get_target_path(self, doc_name):
         target_stem = self.slugify(doc_name)
@@ -146,7 +146,7 @@ class MySTNodeVisitor(Visitor):
     def __init__(self, document):
         super().__init__(document)
 
-        self._heading_depth = 0
+        self._heading_depth = 1
         self._next_sibling_id = None
 
         self._result = None
@@ -184,9 +184,8 @@ class MySTNodeVisitor(Visitor):
             yield SkipChildren
 
     def visit_compact_paragraph(self, node):
-        return self.enter_myst_node(
-            {"type": "paragraph", "children": []}
-        )
+        return self.enter_myst_node({"type": "paragraph", "children": []})
+
     def visit_inline(self, node):
         return self.enter_myst_node(
             {"type": "span", "class": node.get("classes"), "children": []}
@@ -217,15 +216,22 @@ class MySTNodeVisitor(Visitor):
         # TODO
         ...
 
+    @contextlib.contextmanager
+    def enter_heading(self):
+        depth, self._heading_depth = self._heading_depth, self._heading_depth + 1
+        try:
+            yield
+        finally:
+            self._heading_depth = depth
+
     def visit_title(self, node):
         parent_type = self.parent_node.__class__.__name__
         if parent_type == "section":
             with self.enter_myst_node(
                 {"type": "heading", "depth": self._heading_depth, "children": []}
             ):
-                self._heading_depth += 1
-                yield
-                self._heading_depth -= 1
+                with self.enter_heading():
+                    yield
         elif parent_type in {"topic", "admonition", "sidebar"}:
             parent = self.parent_result
             with self.enter_myst_node(
@@ -235,7 +241,6 @@ class MySTNodeVisitor(Visitor):
                 }
             ):
                 yield
-                print(parent)
         else:
             raise NotImplementedError(parent_type)
 
@@ -249,9 +254,8 @@ class MySTNodeVisitor(Visitor):
         with self.enter_myst_node(
             {"type": "heading", "depth": self._heading_depth + 1, "children": []}
         ):
-            self._heading_depth += 1
-            yield
-            self._heading_depth -= 1
+            with self.enter_heading():
+                yield
 
     def visit_bullet_list(self, node):
         return self.enter_myst_node({"type": "list", "children": []})
@@ -285,15 +289,14 @@ class MySTNodeVisitor(Visitor):
         return self.enter_myst_node({"type": "inlineCode", "children": []})
 
     def visit_literal_emphasis(self, node):
-        with self.enter_myst_node({"type": "inlineCode", "children": []}):
-            with self.enter_myst_node({"type": "emph", "children": []}):
+        with self.enter_myst_node({"type": "emphasis", "children": []}):
+            with self.enter_myst_node({"type": "inlineCode", "children": []}):
                 yield
 
     def visit_literal_strong(self, node):
-        with self.enter_myst_node({"type": "inlineCode", "children": []}):
-            with self.enter_myst_node({"type": "strong", "children": []}):
+        with self.enter_myst_node({"type": "strong", "children": []}):
+            with self.enter_myst_node({"type": "inlineCode", "children": []}):
                 yield
-
 
     def visit_footnote_reference(self, node):
         return self.enter_myst_node(
@@ -337,6 +340,7 @@ class MySTNodeVisitor(Visitor):
         return
 
     def visit_field_list(self, node):
+        print("FIELD", node)
         return self.enter_myst_node({"type": "fieldList", "children": []})
 
     def visit_field(self, node):
@@ -442,107 +446,83 @@ class MySTNodeVisitor(Visitor):
     def visit_compound(self, node):
         return self.enter_myst_node(
             {"type": "div", "children": []}
- 
-            )  # TODO: proper container?
+        )  # TODO: proper container?
 
     def visit_desc(self, node):
         return self.enter_myst_node({"type": "desc", "children": []})
 
-
     def visit_desc_addname(self, node):
         return self.enter_myst_node({"type": "descAddname", "children": []})
-
 
     def visit_desc_annotation(self, node):
         return self.enter_myst_node({"type": "descAnnotation", "children": []})
 
-
     def visit_desc_classes_injector(self, node):
         return self.enter_myst_node({"type": "descClassesInjector", "children": []})
-
 
     def visit_desc_content(self, node):
         return self.enter_myst_node({"type": "descContent", "children": []})
 
-
     def visit_desc_inline(self, node):
         return self.enter_myst_node({"type": "descInline", "children": []})
-
 
     def visit_desc_name(self, node):
         return self.enter_myst_node({"type": "descName", "children": []})
 
-
     def visit_desc_optional(self, node):
         return self.enter_myst_node({"type": "descOptional", "children": []})
-
 
     def visit_desc_parameter(self, node):
         return self.enter_myst_node({"type": "descParameter", "children": []})
 
-
     def visit_desc_parameterlist(self, node):
         return self.enter_myst_node({"type": "descParameterlist", "children": []})
-
 
     def visit_desc_returns(self, node):
         return self.enter_myst_node({"type": "descReturns", "children": []})
 
-
     def visit_desc_sig_element(self, node):
         return self.enter_myst_node({"type": "descSigElement", "children": []})
-
 
     def visit_desc_sig_keyword(self, node):
         return self.enter_myst_node({"type": "descSigKeyword", "children": []})
 
-
     def visit_desc_sig_keyword_type(self, node):
         return self.enter_myst_node({"type": "descSigKeywordType", "children": []})
-
 
     def visit_desc_sig_literal_char(self, node):
         return self.enter_myst_node({"type": "descSigLiteralChar", "children": []})
 
-
     def visit_desc_sig_literal_number(self, node):
         return self.enter_myst_node({"type": "descSigLiteralNumber", "children": []})
-
 
     def visit_desc_sig_literal_string(self, node):
         return self.enter_myst_node({"type": "descSigLiteralString", "children": []})
 
-
     def visit_desc_sig_name(self, node):
         return self.enter_myst_node({"type": "descSigName", "children": []})
-
 
     def visit_desc_signature(self, node):
         return self.enter_myst_node({"type": "descSignature", "children": []})
 
-
     def visit_desc_signature_line(self, node):
         return self.enter_myst_node({"type": "descSignatureLine", "children": []})
-
 
     def visit_desc_sig_operator(self, node):
         return self.enter_myst_node({"type": "descSigOperator", "children": []})
 
-
     def visit_desc_sig_punctuation(self, node):
         return self.enter_myst_node({"type": "descSigPunctuation", "children": []})
-
 
     def visit_desc_sig_space(self, node):
         return self.enter_myst_node({"type": "descSigSpace", "children": []})
 
-
     def visit_desc_type(self, node):
         return self.enter_myst_node({"type": "descType", "children": []})
 
-
     def visit_desc_type_parameter(self, node):
         return self.enter_myst_node({"type": "descTypeParameter", "children": []})
+
 
 for name in (
     "attention",
