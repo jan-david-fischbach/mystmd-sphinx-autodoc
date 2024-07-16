@@ -146,7 +146,7 @@ class MySTNodeVisitor(Visitor):
     def __init__(self, document):
         super().__init__(document)
 
-        self._heading_depth = 1
+        self._heading_depth = 0
         self._next_sibling_id = None
 
         self._result = None
@@ -230,10 +230,8 @@ class MySTNodeVisitor(Visitor):
             with self.enter_myst_node(
                 {"type": "heading", "depth": self._heading_depth, "children": []}
             ):
-                with self.enter_heading():
-                    yield
+                yield
         elif parent_type in {"topic", "admonition", "sidebar"}:
-            parent = self.parent_result
             with self.enter_myst_node(
                 {
                     "type": "admonitionTitle",
@@ -328,7 +326,9 @@ class MySTNodeVisitor(Visitor):
     # visit_XXX admonitions (see loop below)
 
     def visit_section(self, node):
-        return self.enter_myst_node({"type": "block", "children": []})
+        with self.enter_myst_node({"type": "block", "children": []}):
+            with self.enter_heading():
+                yield
 
     def visit_document(self, node):
         with self.enter_myst_node({"type": "root", "children": []}) as result:
