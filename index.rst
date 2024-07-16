@@ -6,4 +6,4 @@ Hello
    This is a note
 
 
-See :ref:`install <my-note>`
+See :ref:`install <my-note>`.
