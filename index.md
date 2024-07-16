@@ -2,6 +2,6 @@
 
 I'd like to embed some demo docs here.
 
-:::{embed} xref:apidoc/index
+:::{embed} xref:apidoc/apidocs%2Frandomz%2Frandomz
 
 :::

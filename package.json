@@ -9,13 +9,16 @@
 
     "clean:myst": "myst clean --cache -y",
     "start:myst": "myst start",
+    "start:myst-headless": "myst start --headless",
+    "myst:headless": "npm-run-all -s clean:myst start:myst-headless",
     "myst": "npm-run-all -s clean:myst start:myst"
   },
   "watch": {
     "build:xref": {
       "patterns": [
-        "**/*.{py,rst}"
+        "**/"
       ],
+      "extensions": ["py", "rst"],
       "runOnChangeOnly": false
     }
   },
