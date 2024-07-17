@@ -4,8 +4,8 @@
   "scripts": {
     "xref": "npm-run-all -p serve:xref watch:xref",
     "watch:xref": "npm-watch build:xref",
-    "serve:xref": "serve ./myst -l 9090",
-    "build:xref": "sphinx-build -b myst . myst",
+    "serve:xref": "serve ./_build/sphinx -l 9090",
+    "build:xref": "sphinx-build -b myst sphinx _build/sphinx",
 
     "clean:myst": "myst clean --cache -y",
     "start:myst": "myst start --headless",
@@ -22,7 +22,7 @@
     },
     "watch:myst": {
       "patterns": [
-        "myst"
+        "_build/sphinx"
       ],
       "extensions": ["json"],
       "runOnChangeOnly": false
