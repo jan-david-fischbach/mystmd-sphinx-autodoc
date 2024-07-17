@@ -3,22 +3,28 @@
   "version": "1.0.0",
   "scripts": {
     "xref": "npm-run-all -p serve:xref watch:xref",
-    "watch:xref": "npm-watch",
+    "watch:xref": "npm-watch build:xref",
     "serve:xref": "serve ./myst -l 9090",
     "build:xref": "sphinx-build -b myst . myst",
 
     "clean:myst": "myst clean --cache -y",
-    "start:myst": "myst start",
-    "start:myst-headless": "myst start --headless",
-    "myst:headless": "npm-run-all -s clean:myst start:myst-headless",
-    "myst": "npm-run-all -s clean:myst start:myst"
+    "start:myst": "myst start --headless",
+    "watch:myst": "npm-run-all -s clean:myst start:myst",
+    "myst": "npm-watch watch:myst "
   },
   "watch": {
     "build:xref": {
       "patterns": [
-        "**/"
+        "**"
       ],
       "extensions": ["py", "rst"],
+      "runOnChangeOnly": false
+    },
+    "watch:myst": {
+      "patterns": [
+        "myst"
+      ],
+      "extensions": ["json"],
       "runOnChangeOnly": false
     }
   },

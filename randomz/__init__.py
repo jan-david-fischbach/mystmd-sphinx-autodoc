@@ -8,6 +8,9 @@ import string
 def random_letters(seed: int=None, n:int=100):
     """Returns a list of random characters.
 
+    .. note::
+       Randomness is a choice
+
     :param seed: An RNG seed
     :type seed: int, optional
     :param n: Number of random values
