@@ -12,3 +12,5 @@ Sphinx is a *wierd* tool. This is a demo to see
 
 
 See :ref:`this note <my-note>` for a disclaimer.
+
+I also want to show you :doc:`other`.

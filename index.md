@@ -1,6 +1,13 @@
-# Demo documentation
+# Index
 
-I'd like to embed some demo docs here.
+(my-note)=
+
+:::{warning}
+This is a WIP demo!
+:::
+
+
+See {ref}`this note <my-note>` for a disclaimer.
 
 :::{embed} xref:sphinx/index
 
