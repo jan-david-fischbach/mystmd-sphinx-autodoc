@@ -8,8 +8,8 @@ project:
   authors: []
   github: https://github.com/agoose77/mystmd-sphinx-autodoc
   # bibliography: []
-  references:
-    sphinx: http://localhost:9090
+  # references:
+  #   sphinx: http://localhost:9090
   toc:
     - file: index.md
     - pattern: sphinx/myst/*.md

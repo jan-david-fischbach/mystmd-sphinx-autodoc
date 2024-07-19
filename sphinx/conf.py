@@ -6,3 +6,4 @@ extensions = [
     "sphinx_ext_mystmd"
 ]
 exclude_patterns = [".*", "_build"]
+numfig = True
