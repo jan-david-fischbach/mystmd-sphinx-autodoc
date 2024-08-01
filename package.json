@@ -17,7 +17,7 @@
   "watch": {
     "sphinx:build": {
       "patterns": [
-        "**"
+        "sphinx/"
       ],
       "extensions": [
         "py",
@@ -27,7 +27,7 @@
     },
     "myst:build": {
       "patterns": [
-        "_build/sphinx"
+        "sphinx/myst/"
       ],
       "extensions": [
         "json"

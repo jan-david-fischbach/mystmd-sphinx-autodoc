@@ -3,6 +3,7 @@ Python Documentation
 
 .. toctree::
    other
+   autodoc
 
 Sphinx is a *wierd* tool. This is a demo to see 
 
