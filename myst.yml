@@ -11,8 +11,8 @@ project:
   # references:
   #   sphinx: http://localhost:9090
   toc:
-    - file: index.md
-    - pattern: sphinx/myst/content/**.json
+    - file: main.md
+    - pattern: sphinx/myst/**.myst.json
 site:
   template: book-theme
   # title:
