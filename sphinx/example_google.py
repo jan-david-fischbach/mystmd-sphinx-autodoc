@@ -58,12 +58,21 @@ def function_with_types_in_docstring(param1, param2):
     """
 
 
-def function_with_pep484_type_annotations(param1: int, param2: str) -> bool:
+def function_with_pep484_type_annotations(
+    param1: int, param2: str, param3: int, param4: str, 
+    param5: int, param6: str, param7: int, param8: str
+    ) -> bool:
     """Example function with PEP 484 type annotations.
 
     Args:
         param1: The first parameter.
         param2: The second parameter.
+        param3: The third parameter.
+        param4: The fourth parameter.
+        param5: The fifth parameter.
+        param6: The sixth parameter.
+        param7: The seventh parameter.
+        param8: The eighth parameter.
 
     Returns:
         The return value. True for success, False otherwise.
