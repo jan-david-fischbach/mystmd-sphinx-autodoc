@@ -3,7 +3,7 @@ name = "mystmd-sphinx-autodoc"
 version = "0.1.0"
 description = "Demonstrator for sphinx-ext-mystmd"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 dependencies = [
     "sphinx>=8.2.3",
     "sphinx-ext-mystmd>=0.0.0",
